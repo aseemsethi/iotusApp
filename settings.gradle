@@ -1,0 +1,2 @@
+rootProject.name = "iotus"
+include ':app'

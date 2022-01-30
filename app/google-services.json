@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "339987515057",
+    "project_id": "iotus-12c4f",
+    "storage_bucket": "iotus-12c4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339987515057:android:28638020d75b66c1e8c490",
+        "android_client_info": {
+          "package_name": "com.aseemsethi.iotus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "339987515057-hnb5nsjjrbrv7ec6c7jei68k1qm197p8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aseemsethi.iotus",
+            "certificate_hash": "d2d368b7144a0a36066c4feb831ed109cd647654"
+          }
+        },
+        {
+          "client_id": "339987515057-68t1k05qqgvc5umv29fqm7f6e24un2vk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKXpdzey40SPU1lvLFJUrabyMy4l43njo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "339987515057-68t1k05qqgvc5umv29fqm7f6e24un2vk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
