@@ -223,12 +223,8 @@ public class myMqttService extends Service {
                 //Log.d(TAG, "MQTT Msg recvd...:" + arrOfStr[0] + " : " + arrOfStr[1] +
                 //        " : " + arrOfStr[2]);
                 Intent intent = new Intent();
-                intent.setAction("com.aseemsethi.mylocation.IdStatus");
-                intent.putExtra("name", arrOfStr[0].trim());
-                intent.putExtra("lat", arrOfStr[1].trim());
-                intent.putExtra("long", arrOfStr[2].trim());
-                intent.putExtra("time", currentTime);
-                intent.putExtra("color", colorIndex);
+                intent.setAction("com.aseemsethi.iotus.msg");
+                intent.putExtra("msg", msg);
                 sendBroadcast(intent);
             }
 
