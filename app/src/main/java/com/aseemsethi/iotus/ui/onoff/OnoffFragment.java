@@ -1,4 +1,4 @@
-package com.aseemsethi.iotus.ui.gateway;
+package com.aseemsethi.iotus.ui.onoff;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,7 +23,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.aseemsethi.iotus.R;
-import com.aseemsethi.iotus.databinding.FragmentGatewayBinding;
+import com.aseemsethi.iotus.databinding.FragmentOnoffBinding;
 import com.aseemsethi.iotus.myMqttService;
 import com.aseemsethi.iotus.ui.settings.SettingsViewModel;
 
@@ -41,10 +41,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class GatewayFragment extends Fragment {
+public class OnoffFragment extends Fragment {
 
-    private GatewayViewModel gatewayViewModel;
-    private FragmentGatewayBinding binding;
+    private OnoffViewModel gatewayViewModel;
+    private FragmentOnoffBinding binding;
     final String TAG = "iotus gateway ";
     private SettingsViewModel settingsViewModel;
     private boolean MgrBroacastRegistred = false;
@@ -55,9 +55,9 @@ public class GatewayFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         gatewayViewModel =
-                new ViewModelProvider(this).get(GatewayViewModel.class);
+                new ViewModelProvider(this).get(OnoffViewModel.class);
 
-        binding = FragmentGatewayBinding.inflate(inflater, container, false);
+        binding = FragmentOnoffBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         settingsViewModel = new ViewModelProvider(requireActivity()).

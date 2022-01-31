@@ -11,6 +11,9 @@
     <string name="menu_gateway">Gateway</string>
     <string name="menu_temp">Temp Sensor</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_door">Door</string>
+    <string name="menu_onoff">OnOff</string>
+
 
     <string name="signed_in_fmt">Signed in: %s</string>
     <string name="signed_out">Signed out</string>

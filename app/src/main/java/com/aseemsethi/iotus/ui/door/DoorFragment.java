@@ -1,4 +1,4 @@
-package com.aseemsethi.iotus.ui.gateway;
+package com.aseemsethi.iotus.ui.door;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,10 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.aseemsethi.iotus.R;
-import com.aseemsethi.iotus.databinding.FragmentGatewayBinding;
+import com.aseemsethi.iotus.databinding.FragmentDoorBinding;
 import com.aseemsethi.iotus.myMqttService;
 import com.aseemsethi.iotus.ui.settings.SettingsViewModel;
 
@@ -41,11 +42,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class GatewayFragment extends Fragment {
+public class DoorFragment extends Fragment {
 
-    private GatewayViewModel gatewayViewModel;
-    private FragmentGatewayBinding binding;
-    final String TAG = "iotus gateway ";
+    private DoorViewModel doorViewModel;
+    private FragmentDoorBinding binding;
+    final String TAG = "iotus door ";
     private SettingsViewModel settingsViewModel;
     private boolean MgrBroacastRegistred = false;
     BroadcastReceiver myRecv = null;
@@ -54,10 +55,10 @@ public class GatewayFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        gatewayViewModel =
-                new ViewModelProvider(this).get(GatewayViewModel.class);
+        doorViewModel =
+                new ViewModelProvider(this).get(DoorViewModel.class);
 
-        binding = FragmentGatewayBinding.inflate(inflater, container, false);
+        binding = FragmentDoorBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         settingsViewModel = new ViewModelProvider(requireActivity()).

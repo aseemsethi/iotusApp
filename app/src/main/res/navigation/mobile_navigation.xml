@@ -28,4 +28,16 @@
         android:name="com.aseemsethi.iotus.ui.temp.TempFragment"
         android:label="@string/menu_temp"
         tools:layout="@layout/fragment_temp" />
+
+    <fragment
+        android:id="@+id/nav_door"
+        android:name="com.aseemsethi.iotus.ui.door.DoorFragment"
+        android:label="@string/menu_temp"
+        tools:layout="@layout/fragment_door" />
+
+    <fragment
+        android:id="@+id/nav_onoff"
+        android:name="com.aseemsethi.iotus.ui.onoff.OnoffFragment"
+        android:label="@string/menu_temp"
+        tools:layout="@layout/fragment_onoff" />
 </navigation>
