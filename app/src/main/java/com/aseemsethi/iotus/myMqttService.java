@@ -23,8 +23,12 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -32,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Scanner;
 
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
@@ -219,9 +224,18 @@ public class myMqttService extends Service {
                 String currentTime = new SimpleDateFormat("HH-mm",
                         Locale.getDefault()).format(new Date());
                 Log.d(TAG, "MQTT Msg recvd: " + msg);
-                String[] arrOfStr = msg.split(":", 4);
-                //Log.d(TAG, "MQTT Msg recvd...:" + arrOfStr[0] + " : " + arrOfStr[1] +
-                //        " : " + arrOfStr[2]);
+                String[] arrOfStr = msg.split("[{:,]", 6);
+                Log.d(TAG, "MQTT Msg recvd " +
+                        "1st- " + arrOfStr[0] + " 2nd - " + arrOfStr[1] +
+                        "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3]);
+                if (topic.contains("gw")) {
+                    boolean found = searchFile(getApplicationContext(),
+                            "gw.txt", arrOfStr[2]);
+                    if (found == false)
+                        writeToFile(msg, getApplicationContext(), "gw.txt");
+                } else {
+                    Log.d(TAG, "Not writing to file for topic: " + topic);
+                }
                 Intent intent = new Intent();
                 intent.setAction("com.aseemsethi.iotus.msg");
                 intent.putExtra("msg", msg);
@@ -233,6 +247,53 @@ public class myMqttService extends Service {
                 //Log.d(TAG, "msg delivered");
             }
         });
+    }
+
+    private void writeToFile(String data, Context context, String filename) {
+        data = data.replaceAll("\n", "");
+        Log.d(TAG, "New: " + data);
+        try {
+            try (OutputStreamWriter outputStreamWriter =
+                         new OutputStreamWriter(context.openFileOutput
+                                 (filename, Context.MODE_APPEND))) {
+                outputStreamWriter.write("\n" + data);
+                Log.d(TAG, "Wrote to file");
+                outputStreamWriter.close();
+            }
+        } catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    private boolean searchFile(Context context, String filename, String txt) {
+        String ret = "";
+        File file = context.getFileStreamPath(filename);
+        if(file == null || !file.exists()) {
+            Log.d(TAG, "File not found: " + filename);
+            return false;
+        }
+        try {
+            InputStream inputStream = context.openFileInput(filename);
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    Log.d(TAG, "Read: " + receiveString);
+                    if (receiveString.contains(txt)) {
+                        Log.d(TAG, "Found it !!!!! - " + txt);
+                        return true;
+                    }
+                }
+                inputStream.close();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "Can not read file: " + e.toString());
+        }
+        return false;
     }
 
     public void publish(String topic, String info)

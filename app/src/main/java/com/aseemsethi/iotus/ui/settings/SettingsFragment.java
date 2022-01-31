@@ -78,7 +78,7 @@ public class SettingsFragment extends Fragment {
                 editor.putString("cid", nm);
                 editor.apply();
 
-                String topic = "gurupada/" + nm;
+                String topic = "gurupada/" + nm +"/#";
                 Intent serviceIntent = new Intent(getContext(),
                         myMqttService.class);
                 serviceIntent.setAction("MQTTSUBSCRIBE_TOPIC");

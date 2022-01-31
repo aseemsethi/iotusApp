@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "CID from Shared: " + nm);
         settingsViewModel.cid = nm;
         Log.d(TAG, "Saved CID into Settings: " + settingsViewModel.cid);
-        topic = "gurupada/" + settingsViewModel.cid;
+        topic = "gurupada/" + settingsViewModel.cid + "/#";
 
         Log.d(TAG, "Starting MQTT");
         Intent serviceIntent = new Intent(getApplicationContext(),
