@@ -224,15 +224,29 @@ public class myMqttService extends Service {
                 String currentTime = new SimpleDateFormat("HH-mm",
                         Locale.getDefault()).format(new Date());
                 Log.d(TAG, "MQTT Msg recvd: " + msg);
-                String[] arrOfStr = msg.split("[{:,]", 6);
+                String[] arrOfStr = msg.split("[{:,]", 8);
                 Log.d(TAG, "MQTT Msg recvd " +
                         "1st- " + arrOfStr[0] + " 2nd - " + arrOfStr[1] +
-                        "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3]);
+                        "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3] +
+                        "4th - " + arrOfStr[4]);
                 if (topic.contains("gw")) {
+                    Log.d(TAG, "Recvd GW Add mqtt data");
                     boolean found = searchFile(getApplicationContext(),
                             "gw.txt", arrOfStr[2]);
                     if (found == false)
                         writeToFile(msg, getApplicationContext(), "gw.txt");
+                } else if (topic.contains("temperature")) {
+                    Log.d(TAG, "Recvd Temerature mqtt data");
+                    boolean found = searchFile(getApplicationContext(),
+                            "temperature.txt", arrOfStr[4]); // sensorId
+                    if (found == false)
+                        writeToFile(msg, getApplicationContext(), "temperature.txt");
+                } else if (topic.contains("door")) {
+                    Log.d(TAG, "Recvd Door mqtt data");
+                    boolean found = searchFile(getApplicationContext(),
+                            "door.txt", arrOfStr[4]); // sensorId
+                    if (found == false)
+                        writeToFile(msg, getApplicationContext(), "door.txt");
                 } else {
                     Log.d(TAG, "Not writing to file for topic: " + topic);
                 }

@@ -72,7 +72,7 @@ public class DoorFragment extends Fragment {
             }
         });
         binding.logs.setMovementMethod(new ScrollingMovementMethod());
-        String cl = readLogsFromFile(getContext(), "gw.txt");
+        String cl = readLogsFromFile(getContext(), "door.txt");
 
         return root;
     }
@@ -162,8 +162,9 @@ public class DoorFragment extends Fragment {
                     Log.d(TAG, "Read: " + receiveString);
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
-                        addToTable(jObject.getString("gwid"),jObject.getString("type"),
-                                jObject.getString("ip"));
+                        addToTable(jObject.getString(
+                                "gwid"),jObject.getString("sensorid"),
+                                jObject.getString("data"));
                         rowNum++;
                         number++;
                     } catch (JSONException e) {
@@ -267,14 +268,14 @@ public class DoorFragment extends Fragment {
         tbrow0.addView(tv1);
 
         TextView tv2 = new TextView(getActivity());
-        tv2.setText(" Type ");
+        tv2.setText(" SensorId ");
         tv2.setTextColor(Color.BLUE);
         tv2.setBackgroundColor(Color.parseColor("#f0f0f0"));
         tv2.setGravity(Gravity.CENTER);
         tbrow0.addView(tv2);
 
         TextView tv3 = new TextView(getActivity());
-        tv3.setText(" IP ");
+        tv3.setText(" Data ");
         tv3.setTextColor(Color.BLUE);
         tv3.setBackgroundColor(Color.parseColor("#f0f0f0"));
         tv3.setGravity(Gravity.CENTER);

@@ -32,12 +32,12 @@
     <fragment
         android:id="@+id/nav_door"
         android:name="com.aseemsethi.iotus.ui.door.DoorFragment"
-        android:label="@string/menu_temp"
+        android:label="@string/menu_door"
         tools:layout="@layout/fragment_door" />
 
     <fragment
         android:id="@+id/nav_onoff"
         android:name="com.aseemsethi.iotus.ui.onoff.OnoffFragment"
-        android:label="@string/menu_temp"
+        android:label="@string/menu_onoff"
         tools:layout="@layout/fragment_onoff" />
 </navigation>
