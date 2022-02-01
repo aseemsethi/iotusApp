@@ -86,6 +86,17 @@ public class SettingsFragment extends Fragment {
                 getContext().startService(serviceIntent);
             }
         });
+
+        final Button btn1 = binding.delFiles;
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(buttonClick);
+                getContext().deleteFile("gw.txt");
+                getContext().deleteFile("temperature.txt");
+                getContext().deleteFile("door.txt");
+            }
+        });
         return root;
     }
 

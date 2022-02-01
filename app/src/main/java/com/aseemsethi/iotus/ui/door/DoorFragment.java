@@ -160,6 +160,10 @@ public class DoorFragment extends Fragment {
                 String receiveString = "";
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
                     Log.d(TAG, "Read: " + receiveString);
+                    if (receiveString.length() < 10) {
+                        Log.d(TAG, "Read String is too short");
+                        continue;
+                    }
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
                         addToTable(jObject.getString(

@@ -24,8 +24,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -239,14 +242,18 @@ public class myMqttService extends Service {
                     Log.d(TAG, "Recvd Temerature mqtt data");
                     boolean found = searchFile(getApplicationContext(),
                             "temperature.txt", arrOfStr[4]); // sensorId
-                    if (found == false)
-                        writeToFile(msg, getApplicationContext(), "temperature.txt");
+                    if (found) {
+                        removeLineFromFile("temperature.txt", arrOfStr[4]);
+                    }
+                    writeToFile(msg, getApplicationContext(), "temperature.txt");
                 } else if (topic.contains("door")) {
                     Log.d(TAG, "Recvd Door mqtt data");
                     boolean found = searchFile(getApplicationContext(),
                             "door.txt", arrOfStr[4]); // sensorId
-                    if (found == false)
-                        writeToFile(msg, getApplicationContext(), "door.txt");
+                    if (found) {
+                        removeLineFromFile("door.txt", arrOfStr[4]);
+                    }
+                    writeToFile(msg, getApplicationContext(), "door.txt");
                 } else {
                     Log.d(TAG, "Not writing to file for topic: " + topic);
                 }
@@ -363,5 +370,35 @@ public class myMqttService extends Service {
         Intent serviceIntent = new Intent(context, myMqttService.class);
         serviceIntent.setAction(myMqttService.MQTTSUBSCRIBE_ACTION);
         startService(serviceIntent);
+    }
+
+    public void removeLineFromFile(String filename, String lineToRemove) {
+        File inputFile = getApplicationContext().getFileStreamPath(filename);
+        File tempFile = getApplicationContext().getFileStreamPath("myTempFile.txt");
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
+        try {
+            reader = new BufferedReader(new FileReader(inputFile));
+            writer = new BufferedWriter(new FileWriter(tempFile));
+        } catch(IOException ex){
+            Log.d(TAG, ex.getMessage()); 
+        }
+
+        String currentLine;
+
+        try {
+            while ((currentLine = reader.readLine()) != null) {
+                if (currentLine.contains(lineToRemove)) {
+                    Log.d(TAG, "Removing " + lineToRemove);
+                    continue;
+                }
+                writer.write(currentLine); // System.getProperty("line.separator"));
+            }
+            writer.close();
+            reader.close();
+        } catch (IOException ex){
+            Log.d(TAG, ex.getMessage());
+        }
+        tempFile.renameTo(inputFile);
     }
 }
