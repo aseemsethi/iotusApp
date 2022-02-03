@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -74,6 +75,7 @@ public class myMqttService extends Service {
     String filename = "mylocation.txt";
     int colorIndex = 30;
     Map<String, Integer> colorMap = new HashMap<String, Integer>();
+    Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
     public myMqttService() {
     }
@@ -137,14 +139,19 @@ public class myMqttService extends Service {
             return START_STICKY;
         }
 
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .build();
         mNotificationManager = (NotificationManager) this.getSystemService(
                 Context.NOTIFICATION_SERVICE);
         NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID,
                 "my_channel",
-                NotificationManager.IMPORTANCE_LOW);
+                NotificationManager.IMPORTANCE_HIGH);
         mChannel.enableLights(true);
         mChannel.setLightColor(Color.GREEN);
-        mChannel.setSound(null, null);
+        mChannel.setSound(ringtoneUri, attributes); // This is IMPORTANT
+
+        //mChannel.setSound(null, null);
         //mChannel.setVibrationPattern(new long[] { 0, 400, 200, 400});
         mNotificationManager.createNotificationChannel(mChannel);
 
@@ -173,13 +180,12 @@ public class myMqttService extends Service {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, intent, FLAG_IMMUTABLE);
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Notification noti = new Notification.Builder(this, CHANNEL_ID)
                 //.setContentTitle("MQTT:")
-                .setContentText("Start Svc at: " + currentTime)
+                .setContentText("Start IOTUS Svc: " + currentTime)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                //.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .build();
         startForeground(1, noti,
                 FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE |
@@ -191,7 +197,6 @@ public class myMqttService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendNotification(String msg) {
         Notification noti;
-        Uri ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Log.d(TAG, "Send Notification...");
 
         // Create an explicit intent for an Activity in your app
@@ -204,9 +209,11 @@ public class myMqttService extends Service {
                 .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setContentIntent(pendingIntent)
+                .setSound(ringtoneUri)
+                //.setDefaults(Notification.DEFAULT_ALL)
                 //.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                //.setSound(defaultSoundUri)
                 .build();
+        //noti.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mNotificationManager.notify(incr++, noti);
     }
 
@@ -254,6 +261,9 @@ public class myMqttService extends Service {
                         removeLineFromFile("door.txt", arrOfStr[4]);
                     }
                     writeToFile(msg, getApplicationContext(), "door.txt");
+                } else if (topic.contains("alarm")) {
+                    Log.d(TAG, "Recvd Alarm");
+                    sendNotification("Test Notice:" + currentTime);
                 } else {
                     Log.d(TAG, "Not writing to file for topic: " + topic);
                 }

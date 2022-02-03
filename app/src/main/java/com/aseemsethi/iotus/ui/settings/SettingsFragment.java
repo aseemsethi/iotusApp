@@ -3,6 +3,9 @@ package com.aseemsethi.iotus.ui.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -95,6 +98,10 @@ public class SettingsFragment extends Fragment {
                 getContext().deleteFile("gw.txt");
                 getContext().deleteFile("temperature.txt");
                 getContext().deleteFile("door.txt");
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.
+                        TYPE_NOTIFICATION);
+                Ringtone r = RingtoneManager.getRingtone(getContext(), notification);
+                r.play();
             }
         });
         return root;
