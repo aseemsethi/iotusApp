@@ -40,6 +40,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class GatewayFragment extends Fragment {
 
@@ -127,13 +130,17 @@ public class GatewayFragment extends Fragment {
             Log.d(TAG, "Recevier already registered");
             return;
         }
-        IntentFilter filter2 = new IntentFilter("com.aseemsethi.iotus.msg");
+        IntentFilter filter2 = new IntentFilter("com.aseemsethi.iotus.gw");
         myRecv = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                String currentTime = new SimpleDateFormat("HH-mm",
+                        Locale.getDefault()).format(new Date());
                 Log.d(TAG, "registerServices: msg:" +
                         intent.getStringExtra("name"));
-                binding.logs.append(intent.getStringExtra("msg"));
+                //binding.logs.append(intent.getStringExtra("msg"));
+                binding.logs.setText("Last Update: " + currentTime);
+                String cl = readLogsFromFile(getContext(), "gw.txt");
             }
         };
         getContext().registerReceiver(myRecv, filter2);
@@ -159,6 +166,10 @@ public class GatewayFragment extends Fragment {
                 String receiveString = "";
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
                     Log.d(TAG, "Read: " + receiveString);
+                    if (receiveString.length() < 10) {
+                        Log.d(TAG, "Read String is too short");
+                        continue;
+                    }
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
                         addToTable(jObject.getString("gwid"),jObject.getString("type"),

@@ -245,6 +245,10 @@ public class myMqttService extends Service {
                             "gw.txt", arrOfStr[2]);
                     if (found == false)
                         writeToFile(msg, getApplicationContext(), "gw.txt");
+                    Intent intent = new Intent();
+                    intent.setAction("com.aseemsethi.iotus.gw");
+                    intent.putExtra("msg", msg);
+                    sendBroadcast(intent);
                 } else if (topic.contains("temperature")) {
                     Log.d(TAG, "Recvd Temerature mqtt data");
                     boolean found = searchFile(getApplicationContext(),
@@ -253,6 +257,10 @@ public class myMqttService extends Service {
                         removeLineFromFile("temperature.txt", arrOfStr[4]);
                     }
                     writeToFile(msg, getApplicationContext(), "temperature.txt");
+                    Intent intent = new Intent();
+                    intent.setAction("com.aseemsethi.iotus.temp");
+                    intent.putExtra("msg", msg);
+                    sendBroadcast(intent);
                 } else if (topic.contains("door")) {
                     Log.d(TAG, "Recvd Door mqtt data");
                     boolean found = searchFile(getApplicationContext(),
@@ -261,16 +269,16 @@ public class myMqttService extends Service {
                         removeLineFromFile("door.txt", arrOfStr[4]);
                     }
                     writeToFile(msg, getApplicationContext(), "door.txt");
+                    Intent intent = new Intent();
+                    intent.setAction("com.aseemsethi.iotus.door");
+                    intent.putExtra("msg", msg);
+                    sendBroadcast(intent);
                 } else if (topic.contains("alarm")) {
                     Log.d(TAG, "Recvd Alarm");
                     sendNotification("Test Notice:" + currentTime);
                 } else {
                     Log.d(TAG, "Not writing to file for topic: " + topic);
                 }
-                Intent intent = new Intent();
-                intent.setAction("com.aseemsethi.iotus.msg");
-                intent.putExtra("msg", msg);
-                sendBroadcast(intent);
             }
 
             @Override

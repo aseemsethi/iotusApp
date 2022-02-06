@@ -24,7 +24,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.aseemsethi.iotus.R;
-import com.aseemsethi.iotus.databinding.FragmentOnoffBinding;
+import com.aseemsethi.iotus.databinding.FragmentTempBinding;
 import com.aseemsethi.iotus.myMqttService;
 import com.aseemsethi.iotus.ui.settings.SettingsViewModel;
 
@@ -41,11 +41,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class TempFragment extends Fragment {
 
     private TempViewModel tempViewModel;
-    private FragmentOnoffBinding binding;
+    private FragmentTempBinding binding;
     final String TAG = "iotus gateway ";
     private SettingsViewModel settingsViewModel;
     private boolean MgrBroacastRegistred = false;
@@ -58,7 +61,7 @@ public class TempFragment extends Fragment {
         tempViewModel =
                 new ViewModelProvider(this).get(TempViewModel.class);
 
-        binding = FragmentOnoffBinding.inflate(inflater, container, false);
+        binding = FragmentTempBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         settingsViewModel = new ViewModelProvider(requireActivity()).
@@ -128,13 +131,17 @@ public class TempFragment extends Fragment {
             Log.d(TAG, "Recevier already registered");
             return;
         }
-        IntentFilter filter2 = new IntentFilter("com.aseemsethi.iotus.msg");
+        IntentFilter filter2 = new IntentFilter("com.aseemsethi.iotus.temp");
         myRecv = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                String currentTime = new SimpleDateFormat("HH-mm",
+                        Locale.getDefault()).format(new Date());
                 Log.d(TAG, "registerServices: msg:" +
                         intent.getStringExtra("name"));
-                binding.logs.append(intent.getStringExtra("msg"));
+                //binding.logs.setText(intent.getStringExtra("msg"));
+                binding.logs.setText("Last Update: " + currentTime);
+                String cl = readLogsFromFile(getContext(), "temperature.txt");
             }
         };
         getContext().registerReceiver(myRecv, filter2);
@@ -160,11 +167,20 @@ public class TempFragment extends Fragment {
                 String receiveString = "";
                 while ( (receiveString = bufferedReader.readLine()) != null ) {
                     Log.d(TAG, "Read: " + receiveString);
+                    if (receiveString.length() < 10) {
+                        Log.d(TAG, "Read String is too short");
+                        continue;
+                    }
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
+                        if (receiveString.length() < 10) {
+                            Log.d(TAG, "Read String is too short");
+                            continue;
+                        }
                         addToTable(jObject.getString("gwid"),jObject.getString(
                                 "sensorid"),
-                                jObject.getString("data"));
+                                jObject.getString("data"),
+                                jObject.getString("time"));
                         rowNum++;
                         number++;
                     } catch (JSONException e) {
@@ -183,7 +199,7 @@ public class TempFragment extends Fragment {
         return ret;
     }
 
-    public void addToTable(String gwid, String type, String ip) {
+    public void addToTable(String gwid, String type, String data, String tm) {
         TableRow tbrow = new TableRow(getContext());
         TableLayout.LayoutParams tableRowParams= new TableLayout.LayoutParams
                 (TableLayout.LayoutParams.WRAP_CONTENT,
@@ -227,7 +243,7 @@ public class TempFragment extends Fragment {
         tbrow.addView(t3v);
 
         TextView t4v = new TextView(getActivity());
-        t4v.setText(ip);
+        t4v.setText(data);
         t4v.setTextColor(Color.WHITE);
         t4v.setGravity(Gravity.CENTER);
         t4v.setPadding(5, 15, 15, 15);
@@ -235,6 +251,16 @@ public class TempFragment extends Fragment {
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT, 3));
         tbrow.addView(t4v);
+
+        TextView t5v = new TextView(getActivity());
+        t5v.setText(tm);
+        t5v.setTextColor(Color.WHITE);
+        t5v.setGravity(Gravity.CENTER);
+        t5v.setPadding(5, 15, 15, 15);
+        t5v.setLayoutParams(new
+                TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT, 3));
+        tbrow.addView(t5v);
 
         stk.addView(tbrow, tableRowParams);
     }
@@ -280,6 +306,13 @@ public class TempFragment extends Fragment {
         tv3.setBackgroundColor(Color.parseColor("#f0f0f0"));
         tv3.setGravity(Gravity.CENTER);
         tbrow0.addView(tv3);
+
+        TextView tv4 = new TextView(getActivity());
+        tv4.setText(" Time ");
+        tv4.setTextColor(Color.BLUE);
+        tv4.setBackgroundColor(Color.parseColor("#f0f0f0"));
+        tv4.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv4);
 
         stk.addView(tbrow0, tableRowParams);
     }
