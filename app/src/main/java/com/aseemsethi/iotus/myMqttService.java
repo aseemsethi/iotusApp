@@ -235,10 +235,15 @@ public class myMqttService extends Service {
                         Locale.getDefault()).format(new Date());
                 Log.d(TAG, "MQTT Msg recvd: " + msg);
                 String[] arrOfStr = msg.split("[{:,]", 8);
-                Log.d(TAG, "MQTT Msg recvd " +
-                        "1st- " + arrOfStr[0] + " 2nd - " + arrOfStr[1] +
-                        "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3] +
-                        "4th - " + arrOfStr[4]);
+                if (topic.contains("alarm")) {
+                    // The msg is not JSON format, and so we skip the
+                    // String Logging. We only do it for other topics
+                } else {
+                    Log.d(TAG, "MQTT Msg recvd " +
+                            "1st- " + arrOfStr[0] + " 2nd - " + arrOfStr[1] +
+                            "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3] +
+                            "4th - " + arrOfStr[4]);
+                }
                 if (topic.contains("gw")) {
                     Log.d(TAG, "Recvd GW Add mqtt data");
                     boolean found = searchFile(getApplicationContext(),
@@ -275,7 +280,7 @@ public class myMqttService extends Service {
                     sendBroadcast(intent);
                 } else if (topic.contains("alarm")) {
                     Log.d(TAG, "Recvd Alarm");
-                    sendNotification("Test Notice:" + currentTime);
+                    sendNotification(msg + ": " + currentTime);
                 } else {
                     Log.d(TAG, "Not writing to file for topic: " + topic);
                 }
