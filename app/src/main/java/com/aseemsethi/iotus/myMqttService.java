@@ -19,6 +19,9 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -230,6 +233,7 @@ public class myMqttService extends Service {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+                Map<String, String> map = new HashMap<String, String>();
                 String msg = mqttMessage.toString();
                 String currentTime = new SimpleDateFormat("HH-mm",
                         Locale.getDefault()).format(new Date());
@@ -239,15 +243,20 @@ public class myMqttService extends Service {
                     // The msg is not JSON format, and so we skip the
                     // String Logging. We only do it for other topics
                 } else {
-                    Log.d(TAG, "MQTT Msg recvd " +
-                            "1st- " + arrOfStr[0] + " 2nd - " + arrOfStr[1] +
-                            "3rd - " + arrOfStr[2] + " 4th - " + arrOfStr[3] +
-                            "4th - " + arrOfStr[4]);
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        map = mapper.readValue(msg,
+                                new TypeReference<HashMap<String, String>>() {});
+                        Log.d(TAG, "MQTT Msg recvd - " + "gw:" + map.get("gwid") +
+                                ":" + map.get("sensorid"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 if (topic.contains("gw")) {
                     Log.d(TAG, "Recvd GW Add mqtt data");
                     boolean found = searchFile(getApplicationContext(),
-                            "gw.txt", arrOfStr[2]);
+                            "gw.txt", map.get("gwid"));
                     if (found == false)
                         writeToFile(msg, getApplicationContext(), "gw.txt");
                     Intent intent = new Intent();
@@ -257,9 +266,10 @@ public class myMqttService extends Service {
                 } else if (topic.contains("temperature")) {
                     Log.d(TAG, "Recvd Temerature mqtt data");
                     boolean found = searchFile(getApplicationContext(),
-                            "temperature.txt", arrOfStr[4]); // sensorId
+                            "temperature.txt", map.get("sensorid"));
                     if (found) {
-                        removeLineFromFile("temperature.txt", arrOfStr[4]);
+                        removeLineFromFile("temperature.txt",
+                                map.get("sensorid"));
                     }
                     writeToFile(msg, getApplicationContext(), "temperature.txt");
                     Intent intent = new Intent();
@@ -269,9 +279,9 @@ public class myMqttService extends Service {
                 } else if (topic.contains("door")) {
                     Log.d(TAG, "Recvd Door mqtt data");
                     boolean found = searchFile(getApplicationContext(),
-                            "door.txt", arrOfStr[4]); // sensorId
+                            "door.txt", map.get("sensorid"));
                     if (found) {
-                        removeLineFromFile("door.txt", arrOfStr[4]);
+                        removeLineFromFile("door.txt", map.get("sensorid"));
                     }
                     writeToFile(msg, getApplicationContext(), "door.txt");
                     Intent intent = new Intent();

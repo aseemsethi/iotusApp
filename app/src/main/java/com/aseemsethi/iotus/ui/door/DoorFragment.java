@@ -171,10 +171,14 @@ public class DoorFragment extends Fragment {
                         Log.d(TAG, "Read String is too short");
                         continue;
                     }
+                    // String recvd from MQTT is
+                    // {"data":"Open","gwid":"cc50e3","name":"Study",
+                    // "sensorid":"f6e01a","time":"16:47:37","type":"door"}
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
                         addToTable(jObject.getString(
-                                "gwid"),jObject.getString("sensorid"),
+                                // put 'name' instead of 'sensor id'
+                                "gwid"),jObject.getString("name"),
                                 jObject.getString("data"),
                                 jObject.getString("time"));
                         rowNum++;
