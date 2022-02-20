@@ -178,7 +178,7 @@ public class TempFragment extends Fragment {
                             continue;
                         }
                         addToTable(jObject.getString("gwid"),jObject.getString(
-                                "sensorid"),
+                                "name"),
                                 jObject.getString("data"),
                                 jObject.getString("time"));
                         rowNum++;
