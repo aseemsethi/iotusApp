@@ -98,6 +98,13 @@ public class SettingsFragment extends Fragment {
                 getContext().deleteFile("gw.txt");
                 getContext().deleteFile("temperature.txt");
                 getContext().deleteFile("door.txt");
+
+                SharedPreferences sharedPref = PreferenceManager.
+                        getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("cid", "10000");
+                editor.apply();
+
                 Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.
                         TYPE_NOTIFICATION);
                 Ringtone r = RingtoneManager.getRingtone(getContext(), notification);
