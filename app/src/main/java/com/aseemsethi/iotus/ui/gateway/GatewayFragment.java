@@ -173,7 +173,8 @@ public class GatewayFragment extends Fragment {
                     try {
                         JSONObject jObject = new JSONObject(receiveString);
                         addToTable(jObject.getString("gwid"),jObject.getString("type"),
-                                jObject.getString("ip"));
+                                jObject.getString("ip"),
+                                jObject.getString("time"));
                         rowNum++;
                         number++;
                     } catch (JSONException e) {
@@ -192,7 +193,7 @@ public class GatewayFragment extends Fragment {
         return ret;
     }
 
-    public void addToTable(String gwid, String type, String ip) {
+    public void addToTable(String gwid, String type, String ip, String timeNow) {
         TableRow tbrow = new TableRow(getContext());
         TableLayout.LayoutParams tableRowParams= new TableLayout.LayoutParams
                         (TableLayout.LayoutParams.WRAP_CONTENT,
@@ -245,6 +246,16 @@ public class GatewayFragment extends Fragment {
                 TableRow.LayoutParams.WRAP_CONTENT, 3));
         tbrow.addView(t4v);
 
+        TextView t5v = new TextView(getActivity());
+        t5v.setText(timeNow);
+        t5v.setTextColor(Color.WHITE);
+        t5v.setGravity(Gravity.CENTER);
+        t5v.setPadding(5, 15, 15, 15);
+        t5v.setLayoutParams(new
+                TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
+                TableRow.LayoutParams.WRAP_CONTENT, 3));
+        tbrow.addView(t5v);
+
         stk.addView(tbrow, tableRowParams);
     }
 
@@ -289,6 +300,13 @@ public class GatewayFragment extends Fragment {
         tv3.setBackgroundColor(Color.parseColor("#f0f0f0"));
         tv3.setGravity(Gravity.CENTER);
         tbrow0.addView(tv3);
+
+        TextView tv4 = new TextView(getActivity());
+        tv4.setText(" Updated ");
+        tv4.setTextColor(Color.BLUE);
+        tv4.setBackgroundColor(Color.parseColor("#f0f0f0"));
+        tv4.setGravity(Gravity.CENTER);
+        tbrow0.addView(tv4);
 
         stk.addView(tbrow0, tableRowParams);
     }

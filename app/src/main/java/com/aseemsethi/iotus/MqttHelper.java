@@ -1,8 +1,9 @@
 package com.aseemsethi.iotus;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -27,7 +28,7 @@ public class MqttHelper {
     //final String serverUri = "tcp://mqtt.eclipseprojects.io:1883";
     final String serverUri = "tcp://52.66.70.168:1883";
     final String clientId = UUID.randomUUID().toString();
-    final String subscriptionTopic;
+    String subscriptionTopic;
 
     public MqttHelper(Context context, String topic){
         Log.d(TAG, "MQTT Helper called with topic: " + topic);
@@ -49,7 +50,13 @@ public class MqttHelper {
 
             }
         });
-        connect();
+        if (topic == null) {
+            SharedPreferences preferences = PreferenceManager.
+                    getDefaultSharedPreferences(context);
+            topic = preferences.getString("cid", "10000");
+            Log.d(TAG, "MqttHelper: CID from Shared: " + topic);
+        }
+        connect(topic);
     }
 
     public boolean isConnected() {
@@ -60,7 +67,8 @@ public class MqttHelper {
         }
     }
 
-    public void connect(){
+    public void connect(String topic){
+        subscriptionTopic = topic;
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setCleanSession(true); // was false
         mqttConnectOptions.setKeepAliveInterval(20);
@@ -83,7 +91,7 @@ public class MqttHelper {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    connect();
+                    connect(topic);
                 }
             });
         } catch (MqttException ex){

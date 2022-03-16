@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
@@ -98,6 +100,7 @@ public class myMqttService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = null;
         Log.d(TAG, "onStartCommand mqttService");
+
         lineSeparator = System.getProperty("line.separator");
         if (intent == null) {
             Log.d(TAG, "Intent is null..possible due to app restart");
@@ -109,6 +112,11 @@ public class myMqttService extends Service {
             Bundle extras = intent.getExtras();
             if(extras == null) {
                 Log.d(TAG,"null MQTTSUBSCRIBE_ACTION");
+                SharedPreferences preferences = PreferenceManager.
+                        getDefaultSharedPreferences(getApplicationContext());
+                String nm = preferences.getString("cid", "10000");
+                Log.d(TAG, "OnStart: CID from Shared: " + nm);
+                topic = nm;
             } else {
                 topic = extras.getString("topic");
                 Log.d(TAG, "MQTT_SUBSCRIBE - topic:" + topic);
@@ -117,7 +125,12 @@ public class myMqttService extends Service {
         if (action == "MQTTSUBSCRIBE_TOPIC") {
             Bundle extras = intent.getExtras();
             if(extras == null) {
-                Log.d(TAG,"null MQTTSUBSCRIBE_ACTION");
+                Log.d(TAG,"null MQTTSUBSCRIBE_TOPIC");
+                SharedPreferences preferences = PreferenceManager.
+                        getDefaultSharedPreferences(getApplicationContext());
+                String nm = preferences.getString("cid", "10000");
+                Log.d(TAG, "MQTTSUBSCRIBE_TOPIC: CID from Shared: " + nm);
+                topic = nm;
             } else {
                 if (mqttHelper != null) {
                     mqttHelper.unsubscribeToTopic(topic);
@@ -179,6 +192,14 @@ public class myMqttService extends Service {
         // killed by the user.
         String currentTime = new SimpleDateFormat("HH-mm",
                 Locale.getDefault()).format(new Date());
+
+        long msTime = System.currentTimeMillis();
+        Date curDateTime = new Date(msTime);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd'/'MM hh:mm");
+        //SimpleDateFormat formatter = new SimpleDateFormat("MM'/'dd'/'y hh:mm");
+        currentTime = formatter.format(curDateTime);
+        Log.d(TAG, "Current Time: " + currentTime);
+
         intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
@@ -220,14 +241,22 @@ public class myMqttService extends Service {
         mNotificationManager.notify(incr++, noti);
     }
 
-    private void startMqtt(String topic) throws MqttException {
+    private void startMqtt(final String topic) throws MqttException {
         Log.d(TAG, "startMqtt: topic: " + topic);
         mqttHelper = new MqttHelper(getApplicationContext(), topic);
         mqttHelper.mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable throwable) {
                 Log.d(TAG, "MQTT connection lost !!");
-                mqttHelper.connect();
+                if (topic == null) {
+                    SharedPreferences preferences = PreferenceManager.
+                            getDefaultSharedPreferences(getApplicationContext());
+                    String temp = preferences.getString("cid", "10000");
+                    Log.d(TAG, "connectionLost: CID from Shared: " + temp);
+                    mqttHelper.connect(temp);
+                } else {
+                    mqttHelper.connect(topic);
+                }
             }
 
             @RequiresApi(api = Build.VERSION_CODES.O)
@@ -257,8 +286,11 @@ public class myMqttService extends Service {
                     Log.d(TAG, "Recvd GW Add mqtt data");
                     boolean found = searchFile(getApplicationContext(),
                             "gw.txt", map.get("gwid"));
-                    if (found == false)
-                        writeToFile(msg, getApplicationContext(), "gw.txt");
+                    if (found) {
+                        removeLineFromFile("gw.txt",
+                                map.get("gwid"));
+                    }
+                    writeToFile(msg, getApplicationContext(), "gw.txt");
                     Intent intent = new Intent();
                     intent.setAction("com.aseemsethi.iotus.gw");
                     intent.putExtra("msg", msg);
@@ -381,6 +413,7 @@ public class myMqttService extends Service {
         sendBroadcast(new Intent("RestartMqtt"));
         Context context = getApplicationContext();
         Intent serviceIntent = new Intent(context, myMqttService.class);
+        serviceIntent.putExtra("topic", topic);
         serviceIntent.setAction(myMqttService.MQTTSUBSCRIBE_ACTION);
         startService(serviceIntent);
     }
@@ -401,6 +434,7 @@ public class myMqttService extends Service {
         // The service is no longer used and is being destroyed
         Context context = getApplicationContext();
         Intent serviceIntent = new Intent(context, myMqttService.class);
+        serviceIntent.putExtra("topic", topic);
         serviceIntent.setAction(myMqttService.MQTTSUBSCRIBE_ACTION);
         startService(serviceIntent);
     }
