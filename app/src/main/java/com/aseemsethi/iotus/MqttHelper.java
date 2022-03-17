@@ -53,7 +53,8 @@ public class MqttHelper {
         if (topic == null) {
             SharedPreferences preferences = PreferenceManager.
                     getDefaultSharedPreferences(context);
-            topic = preferences.getString("cid", "10000");
+            String num = preferences.getString("cid", "10000");
+            topic = "gurupada/" + num + "/#";
             Log.d(TAG, "MqttHelper: CID from Shared: " + topic);
         }
         connect(topic);

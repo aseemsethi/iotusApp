@@ -203,60 +203,70 @@ public class GatewayFragment extends Fragment {
         int rightMargin=5;
         int bottomMargin=2;
         tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-        tbrow.setLayoutParams(tableRowParams);
+        //tbrow.setLayoutParams(tableRowParams);
 
         TextView t1v = new TextView(getContext());
         t1v.setText(rowNum.toString());
         t1v.setTextColor(Color.BLUE);
         t1v.setBackgroundColor(Color.parseColor("#f0f0f0"));
-        t1v.setGravity(Gravity.LEFT);
+        //t1v.setGravity(Gravity.LEFT);
         t1v.setPadding(5, 15, 0, 15);
-        t1v.setLayoutParams(new
+        /* t1v.setLayoutParams(new
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT, 1));
+
+         */
         tbrow.addView(t1v);
 
         TextView t2v = new TextView(getActivity());
         t2v.setText(gwid);
         t2v.setTextColor(Color.WHITE);
-        t2v.setGravity(Gravity.LEFT);
+        //t2v.setGravity(Gravity.LEFT);
         t2v.setPadding(5, 15, 15, 15);
-        t2v.setLayoutParams(new
+        /* t2v.setLayoutParams(new
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT, 3));
+                TableRow.LayoutParams.WRAP_CONTENT, 2));
+
+         */
         tbrow.addView(t2v);
 
         TextView t3v = new TextView(getActivity());
         t3v.setText(type);
         t3v.setTextColor(Color.WHITE);
-        t3v.setGravity(Gravity.RIGHT);
+        //t3v.setGravity(Gravity.RIGHT);
         t3v.setPadding(5, 15, 15, 15);
-        t3v.setLayoutParams(new
+        /* t3v.setLayoutParams(new
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT, 3));
+                TableRow.LayoutParams.WRAP_CONTENT, 2));
+
+         */
         tbrow.addView(t3v);
 
         TextView t4v = new TextView(getActivity());
         t4v.setText(ip);
         t4v.setTextColor(Color.WHITE);
-        t4v.setGravity(Gravity.CENTER);
+        //t4v.setGravity(Gravity.CENTER);
         t4v.setPadding(5, 15, 15, 15);
-        t4v.setLayoutParams(new
+        /* t4v.setLayoutParams(new
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
-                TableRow.LayoutParams.WRAP_CONTENT, 3));
+                TableRow.LayoutParams.WRAP_CONTENT, 2));
+
+         */
         tbrow.addView(t4v);
 
         TextView t5v = new TextView(getActivity());
         t5v.setText(timeNow);
         t5v.setTextColor(Color.WHITE);
-        t5v.setGravity(Gravity.CENTER);
+        //t5v.setGravity(Gravity.CENTER);
         t5v.setPadding(5, 15, 15, 15);
-        t5v.setLayoutParams(new
+        /* t5v.setLayoutParams(new
                 TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT, 3));
+
+         */
         tbrow.addView(t5v);
 
-        stk.addView(tbrow, tableRowParams);
+        stk.addView(tbrow); // , tableRowParams);
     }
 
     public void setupTable() {
@@ -271,7 +281,7 @@ public class GatewayFragment extends Fragment {
         int rightMargin=5;
         int bottomMargin=2;
         tableRowParams.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
-        tbrow0.setLayoutParams(tableRowParams);
+        //tbrow0.setLayoutParams(tableRowParams);
 
         TextView tv0 = new TextView(getActivity());
         tv0.setText(" No ");
@@ -308,6 +318,6 @@ public class GatewayFragment extends Fragment {
         tv4.setGravity(Gravity.CENTER);
         tbrow0.addView(tv4);
 
-        stk.addView(tbrow0, tableRowParams);
+        stk.addView(tbrow0); // , tableRowParams);
     }
 }

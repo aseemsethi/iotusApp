@@ -116,7 +116,7 @@ public class myMqttService extends Service {
                         getDefaultSharedPreferences(getApplicationContext());
                 String nm = preferences.getString("cid", "10000");
                 Log.d(TAG, "OnStart: CID from Shared: " + nm);
-                topic = nm;
+                topic = "gurupada/" + nm + "/#";
             } else {
                 topic = extras.getString("topic");
                 Log.d(TAG, "MQTT_SUBSCRIBE - topic:" + topic);
@@ -130,7 +130,7 @@ public class myMqttService extends Service {
                         getDefaultSharedPreferences(getApplicationContext());
                 String nm = preferences.getString("cid", "10000");
                 Log.d(TAG, "MQTTSUBSCRIBE_TOPIC: CID from Shared: " + nm);
-                topic = nm;
+                topic = "gurupada/" + nm + "/#";
             } else {
                 if (mqttHelper != null) {
                     mqttHelper.unsubscribeToTopic(topic);
@@ -253,7 +253,8 @@ public class myMqttService extends Service {
                             getDefaultSharedPreferences(getApplicationContext());
                     String temp = preferences.getString("cid", "10000");
                     Log.d(TAG, "connectionLost: CID from Shared: " + temp);
-                    mqttHelper.connect(temp);
+                    String temp1 = "gurupada/" + temp + "/#";
+                    mqttHelper.connect(temp1);
                 } else {
                     mqttHelper.connect(topic);
                 }
