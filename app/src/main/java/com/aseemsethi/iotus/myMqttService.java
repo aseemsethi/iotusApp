@@ -218,6 +218,7 @@ public class myMqttService extends Service {
         return START_STICKY;
     }
 
+    // send notification
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendNotification(String msg) {
         Notification noti;
