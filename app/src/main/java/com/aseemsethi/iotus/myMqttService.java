@@ -174,7 +174,7 @@ public class myMqttService extends Service {
         if (mqttHelper != null) {
             if ((running == true) && mqttHelper.isConnected()) {
                 Log.d(TAG, "MQTT Service is already connected");
-                return START_STICKY;
+                //return START_STICKY;
             }
         } else {
             Log.d(TAG, "mqtthelper is null");
@@ -222,6 +222,7 @@ public class myMqttService extends Service {
     private void sendNotification(String msg) {
         Notification noti;
         Log.d(TAG, "Send Notification...");
+        mNotificationManager.cancelAll();
 
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, MainActivity.class);
